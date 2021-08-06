@@ -448,15 +448,21 @@ class elFinderVolumeSFTPphpseclib extends elFinderVolumeFTP {
                 );
                 $ts = 0;
                 foreach ($this->ftpRawList($path) as $str) {
-                    $info = preg_split('/\s+/', $str, 9);
-                    if ($info[8] === '.') {
+                    if(is_array($str)){
+                        $info = $str;
                         $info[8] = 'root';
-                        if ($stat = $this->parseRaw(join(' ', $info), $path)) {
-                            unset($stat['name']);
-                            $res = array_merge($res, $stat);
-                            if ($res['ts']) {
-                                $ts = 0;
-                                unset($check['ts']);
+                    }
+                    else{
+                        $info = preg_split('/\s+/', $str, 9);
+                        if ($info[8] === '.') {
+                            $info[8] = 'root';
+                            if ($stat = $this->parseRaw(join(' ', $info), $path)) {
+                                unset($stat['name']);
+                                $res = array_merge($res, $stat);
+                                if ($res['ts']) {
+                                    $ts = 0;
+                                    unset($check['ts']);
+                                }
                             }
                         }
                     }
